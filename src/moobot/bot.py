@@ -61,6 +61,7 @@ def main():
     import moobot.plugins.stats
     import moobot.plugins.loadavg
     import moobot.plugins.disk
+    import moobot.plugins.http
 
     if len(sys.argv) != 4:
         print "Usage: testbot <server[:port]> <channel> <nickname>"
