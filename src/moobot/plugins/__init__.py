@@ -22,8 +22,10 @@ class ActionProvider(object):
     """
     __metaclass__ = PluginMount
 
+    def __init__(self, bot):
+        self.bot = bot
 
-    def __call__(self, bot, target, *args):
+    def __call__(self, target, *args):
         """ bot is a reference to the irc bot, target is who
             initiated the command. """
-        return self.run(bot, target, *args)
+        return self.run(target, *args)

@@ -5,9 +5,9 @@ class StatsProvider(ActionProvider):
     name = "stats"
     description = "Provide some stats on channel usage"
 
-    def run(self, bot, target, *args):
-        c = bot.connection
-        for chname, chobj in bot.channels.items():
+    def run(self, target, *args):
+        c = self.bot.connection
+        for chname, chobj in self.bot.channels.items():
             c.privmsg(target, "--- Channel statistics ---")
             c.privmsg(target, "Channel: " + chname)
             users = chobj.users()

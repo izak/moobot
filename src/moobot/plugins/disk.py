@@ -5,8 +5,8 @@ class DiskUsageProvider(ActionProvider):
     name = "disk"
     description = "Return the Disk Usage"
 
-    def run(self, bot, target, *args):
-        c = bot.connection
+    def run(self, target, *args):
+        c = self.bot.connection
 
         f = open("/proc/mounts", "r")
         mounts = [x.split(" ")[1] for x in f.readlines()]
