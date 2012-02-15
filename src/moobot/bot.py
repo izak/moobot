@@ -9,8 +9,10 @@ The known commands are:
     stats -- Prints some channel information.
 """
 
+import traceback
 from ircbot import SingleServerIRCBot
 from irclib import nm_to_n, nm_to_h, irc_lower, ip_numstr_to_quad, ip_quad_to_numstr
+from plugins import ActionProvider
 
 class MooBot(SingleServerIRCBot):
     def __init__(self, channel, nickname, server, port=6667):
@@ -25,39 +27,41 @@ class MooBot(SingleServerIRCBot):
 
     def on_privmsg(self, c, e):
         nick = nm_to_n(e.source())
-        c.privmsg(nick, "You (%s) said: %s" % (nick, e.arguments()[0]))
+        c.privmsg(nick, "You said: %s" % (e.arguments()[0],))
         self.do_command(e, e.arguments()[0], nick)
 
     def on_pubmsg(self, c, e):
         nick = nm_to_n(e.source())
         target = e.target()
-        c.privmsg(target, "%s: You said: %s" % (nick, e.arguments()[0]))
         a = e.arguments()[0].split(":", 1)
         if len(a) > 1 and irc_lower(a[0]) == irc_lower(self.connection.get_nickname()):
+            c.privmsg(target, "%s: You said: %s" % (nick, a[1]))
             self.do_command(e, a[1].strip(), target)
         return
 
     def do_command(self, e, cmd, target):
         c = self.connection
+        plugins = ActionProvider.plugins
+        arg = cmd.split(" ")
 
-        if cmd == "stats":
-            for chname, chobj in self.channels.items():
-                c.privmsg(target, "--- Channel statistics ---")
-                c.privmsg(target, "Channel: " + chname)
-                users = chobj.users()
-                users.sort()
-                c.privmsg(target, "Users: " + ", ".join(users))
-                opers = chobj.opers()
-                opers.sort()
-                c.privmsg(target, "Opers: " + ", ".join(opers))
-                voiced = chobj.voiced()
-                voiced.sort()
-                c.privmsg(target, "Voiced: " + ", ".join(voiced))
-        else:
-            c.privmsg(target, "Not understood: " + cmd)
+        for plugin in plugins:
+            if arg[0] == plugin.name:
+                try:
+                    return plugin()(self, target, *arg[1:])
+                except:
+                    tb = traceback.format_exc()
+                    for l in tb.split("\n"):
+                        c.privmsg(target, l)
+                    return None
+        c.privmsg(target, "-Not understood: " + cmd)
 
 def main():
     import sys
+    # Plugins
+    import plugins.stats
+    import plugins.loadavg
+    import plugins.disk
+
     if len(sys.argv) != 4:
         print "Usage: testbot <server[:port]> <channel> <nickname>"
         sys.exit(1)
