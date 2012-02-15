@@ -9,5 +9,5 @@ setup(name='moobot',
       url='http://github.com/izak',
       packages=find_packages('src', exclude=['ez_setup']),
       package_dir = {'' : 'src'},
-      scripts=('moobot.py', ),
+      scripts=('moobot', ),
       )

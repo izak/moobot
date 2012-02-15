@@ -1,4 +1,4 @@
-from plugins import ActionProvider
+from moobot.plugins import ActionProvider
 
 class LoadAverageProvider(ActionProvider):
     name = "loadavg"

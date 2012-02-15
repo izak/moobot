@@ -1,5 +1,5 @@
 import os
-from plugins import ActionProvider
+from moobot.plugins import ActionProvider
 
 class DiskUsageProvider(ActionProvider):
     name = "disk"

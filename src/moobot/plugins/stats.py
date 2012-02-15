@@ -1,4 +1,4 @@
-from plugins import ActionProvider
+from moobot.plugins import ActionProvider
 
 # Common plugins, serves as an example of how to do it
 class StatsProvider(ActionProvider):
