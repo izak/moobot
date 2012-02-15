@@ -81,3 +81,6 @@ def main():
 
     bot = MooBot(channel, nickname, server, port)
     bot.start()
+
+if __name__ == '__main__':
+    main()
