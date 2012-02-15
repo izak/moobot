@@ -18,6 +18,7 @@ class MooBot(SingleServerIRCBot):
     def __init__(self, channel, nickname, server, port=6667):
         SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname)
         self.channel = channel
+        self.plugins = [plugin() for plugin in ActionProvider.plugins]
 
     def on_nicknameinuse(self, c, e):
         c.nick(c.get_nickname() + "_")
@@ -41,13 +42,12 @@ class MooBot(SingleServerIRCBot):
 
     def do_command(self, e, cmd, target):
         c = self.connection
-        plugins = ActionProvider.plugins
         arg = cmd.split(" ")
 
-        for plugin in plugins:
+        for plugin in self.plugins:
             if arg[0] == plugin.name:
                 try:
-                    return plugin()(self, target, *arg[1:])
+                    return plugin(self, target, *arg[1:])
                 except:
                     tb = traceback.format_exc()
                     for l in tb.split("\n"):
