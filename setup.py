@@ -1,14 +1,13 @@
 from setuptools import setup, find_packages
 
-setup(name='upfrontbackuptools',
-      version='2',
-      description='Upfront Systems\' Backup tools',
-      long_description='Includes python and shell scripts used for backup purpos
-es',  
+setup(name='moobot',
+      version='1',
+      description='An extensible IRC bot written in python',
+      long_description='An extensible IRC bot, written in python',  
       author='Izak Burger',
-      author_email='izak@upfrontsystems.co.za',
-      url='http://www.upfrontsystems.co.za/Members/izak',
+      author_email='isburger@gmail.com',
+      url='http://github.com/izak',
       packages=find_packages('src', exclude=['ez_setup']),
       package_dir = {'' : 'src'},
-      scripts=('ftpsync.py', 'tarbackup.py'),
+      scripts=('moobot.py', ),
       )

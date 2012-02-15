@@ -12,7 +12,7 @@ The known commands are:
 import traceback
 from ircbot import SingleServerIRCBot
 from irclib import nm_to_n, nm_to_h, irc_lower, ip_numstr_to_quad, ip_quad_to_numstr
-from plugins import ActionProvider
+from moobot.plugins import ActionProvider
 
 class MooBot(SingleServerIRCBot):
     def __init__(self, channel, nickname, server, port=6667):
@@ -58,9 +58,9 @@ class MooBot(SingleServerIRCBot):
 def main():
     import sys
     # Plugins
-    import plugins.stats
-    import plugins.loadavg
-    import plugins.disk
+    import moobot.plugins.stats
+    import moobot.plugins.loadavg
+    import moobot.plugins.disk
 
     if len(sys.argv) != 4:
         print "Usage: testbot <server[:port]> <channel> <nickname>"
@@ -81,6 +81,3 @@ def main():
 
     bot = MooBot(channel, nickname, server, port)
     bot.start()
-
-if __name__ == "__main__":
-    main()
