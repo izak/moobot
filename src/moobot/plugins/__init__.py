@@ -26,6 +26,21 @@ class PassiveProvider(object):
         self.bot = bot
 
     def __call__(self, target, *args):
-        """ bot is a reference to the irc bot, target is who
-            initiated the command. """
+        """ target is who initiated the command. """
         return self.run(target, *args)
+
+class ActiveProvider(object):
+    """ An action that fires periodically and does something, we need:
+    run: a callable that does the deed
+    period: how often should this run
+    """
+    __metaclass__ = PluginMount
+
+    def __init__(self, bot):
+        self.bot = bot
+
+    def period(self):
+        return 5
+
+    def __call__(self):
+        return self.run()
