@@ -1,7 +1,7 @@
 import socket
-from moobot.plugins import ActionProvider
+from moobot.plugins import PassiveProvider
 
-class TCPCheckProvider(ActionProvider):
+class TCPCheckProvider(PassiveProvider):
     name = "smtp"
     description = "Connect to a smtp server"
 

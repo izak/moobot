@@ -1,6 +1,6 @@
-from moobot.plugins import ActionProvider
+from moobot.plugins import PassiveProvider
 
-class LoadAverageProvider(ActionProvider):
+class LoadAverageProvider(PassiveProvider):
     name = "loadavg"
     description = "Return the load average"
 

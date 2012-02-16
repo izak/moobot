@@ -1,7 +1,7 @@
 import os
-from moobot.plugins import ActionProvider
+from moobot.plugins import PassiveProvider
 
-class DiskUsageProvider(ActionProvider):
+class DiskUsageProvider(PassiveProvider):
     name = "disk"
     description = "Return the Disk Usage"
 

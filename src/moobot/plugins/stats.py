@@ -1,7 +1,7 @@
-from moobot.plugins import ActionProvider
+from moobot.plugins import PassiveProvider
 
 # Common plugins, serves as an example of how to do it
-class StatsProvider(ActionProvider):
+class StatsProvider(PassiveProvider):
     name = "stats"
     description = "Provide some stats on channel usage"
 

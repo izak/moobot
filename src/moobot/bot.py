@@ -13,13 +13,13 @@ import traceback
 from ConfigParser import ConfigParser
 from ircbot import SingleServerIRCBot
 from irclib import nm_to_n, nm_to_h, irc_lower, ip_numstr_to_quad, ip_quad_to_numstr
-from moobot.plugins import ActionProvider
+from moobot.plugins import PassiveProvider
 
 class MooBot(SingleServerIRCBot):
     def __init__(self, channel, nickname, server, port=6667):
         SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname)
         self.channel = channel
-        self.plugins = [plugin(self) for plugin in ActionProvider.plugins]
+        self.plugins = [plugin(self) for plugin in PassiveProvider.plugins]
 
     def on_nicknameinuse(self, c, e):
         c.nick(c.get_nickname() + "_")

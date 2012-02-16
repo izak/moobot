@@ -1,8 +1,8 @@
 import urllib2
 import socket
-from moobot.plugins import ActionProvider
+from moobot.plugins import PassiveProvider
 
-class HTTPCheckProvider(ActionProvider):
+class HTTPCheckProvider(PassiveProvider):
     name = "http"
     description = "Fetch an url"
 

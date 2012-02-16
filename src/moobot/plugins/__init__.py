@@ -12,7 +12,7 @@ class PluginMount(type):
             # track of it later.
             cls.plugins.append(cls)
 
-class ActionProvider(object):
+class PassiveProvider(object):
     """
     Describes what to do. Needs these attributes:
 
