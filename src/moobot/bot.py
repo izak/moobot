@@ -29,14 +29,6 @@ class MooBot(SingleServerIRCBot):
         self.passive = [plugin(self) for plugin in PassiveProvider.plugins]
         self.active = [plugin(self) for plugin in ActiveProvider.plugins]
 
-    def process_forever(self, timeout=0.2):
-        """ Override process_forever in irclib, after each iteration,
-            call the active plugins. """
-        while 1:
-            self.process_once(timeout)
-            for plugin in self.active:
-                plugin()
-
     def on_nicknameinuse(self, c, e):
         c.nick(c.get_nickname() + "_")
 
