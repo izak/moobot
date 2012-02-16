@@ -45,7 +45,6 @@ class MooBot(SingleServerIRCBot):
 
     def on_privmsg(self, c, e):
         nick = nm_to_n(e.source())
-        c.privmsg(nick, "You said: %s" % (e.arguments()[0],))
         self.do_command(e, e.arguments()[0], nick)
 
     def on_pubmsg(self, c, e):
@@ -53,7 +52,6 @@ class MooBot(SingleServerIRCBot):
         target = e.target()
         a = e.arguments()[0].split(":", 1)
         if len(a) > 1 and irc_lower(a[0]) == irc_lower(self.connection.get_nickname()):
-            c.privmsg(target, "%s: You said: %s" % (nick, a[1]))
             self.do_command(e, a[1].strip(), target)
         return
 
