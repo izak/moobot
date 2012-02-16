@@ -13,7 +13,7 @@ import traceback
 from ConfigParser import ConfigParser
 from ircbot import SingleServerIRCBot
 from irclib import nm_to_n, nm_to_h, irc_lower, ip_numstr_to_quad, ip_quad_to_numstr
-from moobot.plugins import PassiveProvider, ActiveProvider
+from moobot.plugins import PassiveProvider, ActiveProvider, InitProvider
 
 def activate(connection, plugin):
     # Call it, then reschedule it
@@ -34,6 +34,9 @@ class MooBot(SingleServerIRCBot):
 
     def on_welcome(self, c, e):
         c.join(self.channel)
+        # Call the init plugins
+        for plugin in InitProvider.plugins:
+            plugin(self)()
 
     def on_privmsg(self, c, e):
         nick = nm_to_n(e.source())

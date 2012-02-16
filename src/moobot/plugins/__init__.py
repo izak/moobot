@@ -14,9 +14,9 @@ class PluginMount(type):
 
 class PassiveProvider(object):
     """
-    Describes what to do. Needs these attributes:
+    Actions that fire when someone talks to us. Needs these attributes:
 
-    name: our name
+    name: our name, we react when a line starts with this
     description: What do we do
     run: A callable that does the deed
     """
@@ -41,6 +41,18 @@ class ActiveProvider(object):
 
     def period(self):
         return 5
+
+    def __call__(self):
+        return self.run()
+
+class InitProvider(object):
+    """ Actions executed once, right after joining the channel.
+        run: a callable
+    """
+    __metaclass__ = PluginMount
+
+    def __init__(self, bot):
+        self.bot = bot
 
     def __call__(self):
         return self.run()
