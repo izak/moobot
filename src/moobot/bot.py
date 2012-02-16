@@ -10,6 +10,7 @@ The known commands are:
 """
 
 import traceback
+from ConfigParser import ConfigParser
 from ircbot import SingleServerIRCBot
 from irclib import nm_to_n, nm_to_h, irc_lower, ip_numstr_to_quad, ip_quad_to_numstr
 from moobot.plugins import ActionProvider
@@ -57,29 +58,24 @@ class MooBot(SingleServerIRCBot):
 
 def main():
     import sys
-    # Plugins
-    import moobot.plugins.stats
-    import moobot.plugins.loadavg
-    import moobot.plugins.disk
-    import moobot.plugins.http
-    import moobot.plugins.smtp
 
-    if len(sys.argv) != 4:
-        print "Usage: testbot <server[:port]> <channel> <nickname>"
+    if len(sys.argv) != 2:
+        print "Usage: %s configfile" % sys.argv[0]
         sys.exit(1)
 
-    s = sys.argv[1].split(":", 1)
-    server = s[0]
-    if len(s) == 2:
-        try:
-            port = int(s[1])
-        except ValueError:
-            print "Error: Erroneous port."
-            sys.exit(1)
-    else:
-        port = 6667
-    channel = sys.argv[2]
-    nickname = sys.argv[3]
+    config = ConfigParser()
+    config.read(sys.argv[1])
+
+    server = config.get('server', 'host')
+    port = int(config.get('server', 'port'))
+    channel = config.get('server', 'channel')
+    nickname = config.get('server', 'nick')
+
+    # Load the passive plugins (those who only speak when spoken to)
+    modules = [x.strip() for x in \
+        config.get('passive', 'plugins').strip().split('\n')]
+    for module in modules:
+        __import__(module)
 
     bot = MooBot(channel, nickname, server, port)
     bot.start()
