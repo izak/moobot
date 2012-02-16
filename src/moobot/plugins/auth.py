@@ -13,6 +13,7 @@ class AuthProvider(PassiveProvider):
 
         if len(args) < 1:
             c.privmsg(target, "huh?")
+            return None
 
         # Server sends a unique challenge value sc to the client
         sc = args[0]
@@ -23,6 +24,7 @@ class AuthProvider(PassiveProvider):
         # Client computes cr = hash(cc + sc + secret)
         cr = sha256(cc + sc + secret)
 
-        # Client sends cr and cc to server
+        # Client sends cr and cc to peer
         self.bot.connection.privmsg(target,
-            "%s %s" % (cr.hexdigest(), encodestring(cc).strip()))
+            "authresponse %s %s" % (cr.hexdigest(),
+                encodestring(cc).strip()))
