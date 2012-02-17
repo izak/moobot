@@ -1,3 +1,4 @@
+from ConfigParser import NoOptionError
 from random import getrandbits
 from struct import pack
 from hashlib import sha256
@@ -9,7 +10,11 @@ class AuthProvider(PassiveProvider):
     description = "Respond to authentication challenges"
 
     def run(self, target, *args):
-        secret = '%08s' % (self.bot.config.get('auth', 'secret')[:8],)
+        try:
+            secret = '%08s' % (self.bot.config.get('auth', target)[:8],)
+        except NoOptionError:
+            # Don't have a secret for you, fail
+            return None
 
         if len(args) < 1:
             c.privmsg(target, "huh?")
