@@ -14,6 +14,7 @@ from ConfigParser import ConfigParser
 from ircbot import SingleServerIRCBot
 from irclib import nm_to_n, nm_to_h, irc_lower, ip_numstr_to_quad, ip_quad_to_numstr
 from moobot.plugins import PassiveProvider, ActiveProvider, InitProvider
+from moobot.plugins import JoinActionProvider, LeaveActionProvider
 
 def activate(connection, plugin):
     # Call it, then reschedule it
@@ -28,6 +29,8 @@ class MooBot(SingleServerIRCBot):
         self.config = config
         self.passive = [plugin(self) for plugin in PassiveProvider.plugins]
         self.active = [plugin(self) for plugin in ActiveProvider.plugins]
+        self.join = [plugin(self) for plugin in JoinActionProvider.plugins]
+        self.leave = [plugin(self) for plugin in LeaveActionProvider.plugins]
 
     def on_nicknameinuse(self, c, e):
         c.nick(c.get_nickname() + "_")
@@ -37,6 +40,29 @@ class MooBot(SingleServerIRCBot):
         # Call the init plugins
         for plugin in InitProvider.plugins:
             plugin(self)()
+
+    def on_join(self, c, e):
+        if not c.is_connected():
+            return
+
+        nick = nm_to_n(e.source())
+
+        if nick == c.get_nickname():
+            # Don't execute on my own join
+            return
+
+        for plugin in self.join:
+            plugin(nick)
+
+    def on_part(self, c, e):
+        nick = nm_to_n(e.source())
+        for plugin in self.leave:
+            plugin(nick)
+
+    def on_quit(self, c, e):
+        nick = nm_to_n(e.source())
+        for plugin in self.leave:
+            plugin(nick)
 
     def on_privmsg(self, c, e):
         nick = nm_to_n(e.source())

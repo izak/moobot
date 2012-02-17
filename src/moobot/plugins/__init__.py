@@ -56,3 +56,23 @@ class InitProvider(object):
 
     def __call__(self):
         return self.run()
+
+class JoinActionProvider(object):
+    """ Actions executed when someone joins. """
+    __metaclass__ = PluginMount
+
+    def __init__(self, bot):
+        self.bot = bot
+
+    def __call__(self, nick):
+        return self.run(nick)
+
+class LeaveActionProvider(object):
+    """ Actions executed when someone leaves. """
+    __metaclass__ = PluginMount
+
+    def __init__(self, bot):
+        self.bot = bot
+
+    def __call__(self, nick):
+        return self.run(nick)
