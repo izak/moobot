@@ -3,9 +3,16 @@ from struct import pack
 from hashlib import sha256
 from base64 import encodestring, decodestring
 from moobot.plugins import InitProvider, PassiveProvider
+from moobot.plugins import JoinActionProvider, LeaveActionProvider
 
 challenges = {}
 trusted = {}
+
+def challenge(bot, peer):
+    # We send a unique challenge value sc to the peer
+    sc = encodestring(pack('>Q', getrandbits(64))).strip()
+    challenges[peer] = sc
+    bot.connection.privmsg(peer, "auth %s" % sc)
 
 class Challenger(InitProvider):
 
@@ -13,15 +20,11 @@ class Challenger(InitProvider):
         self.bot = bot
 
     def run(self):
-        secret = '%08s' % (self.bot.config.get('trust', 'secret')[:8],)
         peers = [x.strip() for x in \
             self.bot.config.get('trust', 'peers').strip().split('\n')]
 
         for peer in peers:
-            # We send a unique challenge value sc to the peer
-            sc = encodestring(pack('>Q', getrandbits(64))).strip()
-            challenges[peer] = sc
-            self.bot.connection.privmsg(peer, "auth %s" % sc)
+            challenge(self.bot, peer)
 
 class Verifier(PassiveProvider):
     name = "authresponse"
@@ -57,3 +60,20 @@ class QueryTrust(PassiveProvider):
             self.bot.connection.privmsg(target, "Yes, I trust %s" % args[0])
         else:
             self.bot.connection.privmsg(target, "No, I distrust %s" % args[0])
+
+class TrustOnJoin(JoinActionProvider):
+    def run(self, nick):
+        peers = [x.strip() for x in \
+            self.bot.config.get('trust', 'peers').strip().split('\n')]
+
+        # If someone we have a potential trust relationship with has just
+        # joined, distrust him initially and challenge
+        if nick in peers:
+            if nick in trusted:
+                del(trusted[nick])
+            challenge(self.bot, nick)
+
+class DistrustOnLeave(LeaveActionProvider):
+    def run(self, nick):
+        if nick in trusted:
+            del(trusted[nick])
