@@ -27,7 +27,11 @@ class MooBot(SingleServerIRCBot):
         SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname)
         self.channel = channel
         self.config = config
-        self.passive = [plugin(self) for plugin in PassiveProvider.plugins]
+
+        self.passive = {}
+        for plugin in [p(self) for p in PassiveProvider.plugins]:
+            self.passive[plugin.name] = plugin
+
         self.active = [plugin(self) for plugin in ActiveProvider.plugins]
         self.join = [plugin(self) for plugin in JoinActionProvider.plugins]
         self.leave = [plugin(self) for plugin in LeaveActionProvider.plugins]
@@ -80,15 +84,15 @@ class MooBot(SingleServerIRCBot):
         c = self.connection
         arg = cmd.split(" ")
 
-        for plugin in self.passive:
-            if arg[0] == plugin.name:
-                try:
-                    return plugin(target, *arg[1:])
-                except:
-                    tb = traceback.format_exc()
-                    for l in tb.split("\n"):
-                        c.privmsg(target, l)
-                    return None
+        plugin = self.passive.get(arg[0], None)
+        if plugin is not None:
+            try:
+                return plugin(target, *arg[1:])
+            except:
+                tb = traceback.format_exc()
+                for l in tb.split("\n"):
+                    c.privmsg(target, l)
+                return None
         c.privmsg(target, "-Not understood: " + cmd)
 
     def start(self):
